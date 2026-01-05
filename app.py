@@ -6,7 +6,7 @@ import docx
 import io
 
 # 1. PAGE CONFIGURATION
-st.set_page_config(page_title="AI Tutor", page_icon="🎓", layout="wide")
+st.set_page_config(page_title="AI learning assistant", page_icon="🎓", layout="wide")
 
 # 2. SIDEBAR SETUP (API Key and File Uploads)
 with st.sidebar:
