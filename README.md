@@ -14,7 +14,7 @@ An AI-powered teaching assistant built for December AI Challenge. This tool uses
 - The model uses a specific prompt for students
 
 ## Future Improvements
-- I would add a Voice feature
+- Add a Voice feature
 - Performance improvements such as speed, a better prompt.
 - UI enhancements
 - add specific AI models for specific topics for students
