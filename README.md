@@ -13,7 +13,7 @@ An AI-powered teaching assistant built for December AI Challenge. This tool uses
 - Gemini API key for AI model
 - The model uses a specific prompt for students
 
-##Future Improvements
+## Future Improvements
 - I would add a Voice feature
 - Performance improvements such as speed, a better prompt.
 - UI enhancements
