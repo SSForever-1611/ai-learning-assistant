@@ -5,17 +5,16 @@ from pypdf import PdfReader
 import docx
 import io
 
-# 1. PAGE CONFIGURATION
+
 st.set_page_config(page_title="AI learning assistant", page_icon="🎓", layout="wide")
 
-# 2. SIDEBAR SETUP (API Key and File Uploads)
 with st.sidebar:
-    st.title("⚙️ Setup")
+    st.title(" Setup")
     api_key = st.text_input("Enter Gemini API Key", type="password")
     st.info("Get an API key from [Google AI Studio](https://aistudio.google.com/)")
     
     st.markdown("---")
-    st.header("📚 Study Materials")
+    st.header(" Study Materials")
     uploaded_file = st.file_uploader("Upload Notes (PDF/DOCX) or Problem (Image)", 
                                      type=["pdf", "docx", "jpg", "png", "jpeg"])
     
@@ -38,12 +37,10 @@ with st.sidebar:
                 document_context += para.text + "\n"
             st.success("Word Doc Content Loaded!")
             
-        # Handle Images
         elif file_extension in ['jpg', 'jpeg', 'png']:
             image_data = Image.open(uploaded_file)
             st.image(image_data, caption="Uploaded Homework Image", use_column_width=True)
 
-# 3. INITIALIZE CHAT HISTORY
 if "messages" not in st.session_state:
     st.session_state.messages = []
     st.session_state.messages.append({
@@ -51,18 +48,14 @@ if "messages" not in st.session_state:
         "content": "Hi! I'm your AI Tutor. Upload your notes or a photo of a problem, and let's solve it together!"
     })
 
-# 4. MAIN INTERFACE
 st.title("🎓 AI Tutor")
 st.write("Use your own lecture notes to learn faster.")
 
-# Display Chat history
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# 5. CHAT INPUT AND PROCESSING
 if user_input := st.chat_input("Ask a question about your study material..."):
-    # Add user message to UI
     with st.chat_message("user"):
         st.markdown(user_input)
     st.session_state.messages.append({"role": "user", "content": user_input})
@@ -73,7 +66,6 @@ if user_input := st.chat_input("Ask a question about your study material..."):
         try:
             genai.configure(api_key=api_key)
             
-            # THE PROMPT: This defines the AI's behavior
             system_instruction = f"""
             You are a world-class Socratic Tutor. 
             
@@ -94,34 +86,27 @@ if user_input := st.chat_input("Ask a question about your study material..."):
             10. Answer some questions direcltly, only if the question is it is fact-based like who is the president of a country or what is the capital of a state. or tell me the defintion of a word., or tell me about a historical event, a country, a person, etc."
             """
 
-            # Initialize the model with instructions
             model = genai.GenerativeModel(
                 model_name="gemini-2.5-flash",
                 system_instruction=system_instruction
             )
 
-            # FORMAT HISTORY FOR GEMINI API (Strictly alternating User/Model)
-            # We exclude the very last user message because we send it in chat.send_message()
+            
             formatted_history = []
             for msg in st.session_state.messages[:-1]:
-                # The first welcome message is assistant; Gemini calls this 'model'
                 role = "user" if msg["role"] == "user" else "model"
                 formatted_history.append({"role": role, "parts": [msg["content"]]})
 
-            # START CHAT
             chat_session = model.start_chat(history=formatted_history)
             
-            # PREPARE CONTENT (Include image if available)
             content_list = [user_input]
             if image_data:
                 content_list.append(image_data)
 
-            # GET RESPONSE
             with st.spinner("Analyzing..."):
                 response = chat_session.send_message(content_list)
                 ai_text = response.text
 
-            # Update UI and History
             with st.chat_message("assistant"):
                 st.markdown(ai_text)
             st.session_state.messages.append({"role": "assistant", "content": ai_text})
